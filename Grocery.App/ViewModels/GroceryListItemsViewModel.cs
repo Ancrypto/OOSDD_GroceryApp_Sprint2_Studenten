@@ -56,7 +56,6 @@ namespace Grocery.App.ViewModels
                 {
 					AvailableProducts.Add(product);
 				}
-                
 			}
 		}
 
@@ -80,6 +79,23 @@ namespace Grocery.App.ViewModels
 			//Werk de voorraad (Stock) van het product bij en zorg dat deze wordt vastgelegd (middels _productService)
 			//Werk de lijst AvailableProducts bij, want dit product is niet meer beschikbaar
 			//call OnGroceryListChanged(GroceryList);
+
+			List<Product> products = _productService.GetAll();
+
+			if (product == null || product.Id <= 0)
+				return;
+
+			foreach (var _product in products)
+            {
+                if (_product.Id == product.Id && product.Id > 0 && product.Id != null)
+                {
+                    _groceryListItemsService.Add(new GroceryListItem(0, groceryList.Id, product.Id, 1));
+                    product.Stock -= 1;
+                    _productService.Update(product);
+                    AvailableProducts.Remove(product);
+					OnGroceryListChanged(GroceryList);
+				}
+            }
 		}
     }
 }
